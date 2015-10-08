@@ -19,19 +19,31 @@ class Federation:
                 continue
             return (srv, iteminfo)
         return (None,None)
+    def __call__(self, ret):
+        if ret and type(ret) == type({}) and len(ret.keys()) > 0:
+            return ret[ret.keys()[-1]]
+        else:
+            return None
     def history(self, item, interval, t_shift=None, fun=None):
         srv, iteminfo = self[item]
         if not srv:
             return None
-        return srv.history(item, interval, t_shift, fun, iteminfo)
+        return self(srv.history(item, interval, t_shift, fun, iteminfo))
 
 
 
 def startup(ctx):
-    ns.item_cache = {}
+    ctx.item_cache = {}
 
 def history(ctx, item, interval, t_shift=None, fun=None):
     f = Federation(ctx)
+    return f.history(item, interval, t_shift, fun)
 
 
 main = history
+
+if __name__ == '__main__':
+    class C:
+        item_cache = {}
+    c = C()
+    print history(c,"zabbix-251:Context switches", "#300")
