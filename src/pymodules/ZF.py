@@ -20,8 +20,11 @@ class Federation:
             return (srv, iteminfo)
         return (None,None)
     def __call__(self, ret):
+        #print ret
         if ret and type(ret) == type({}) and len(ret.keys()) > 0:
-            return ret[ret.keys()[-1]]
+            stamps = ret.keys()
+            stamps.sort()
+            return ret[stamps[-1]]
         else:
             return None
     def history(self, item, interval, t_shift=None, fun=None):
@@ -46,4 +49,4 @@ if __name__ == '__main__':
     class C:
         item_cache = {}
     c = C()
-    print history(c,"zabbix-251:Context switches", "#300")
+    print history(c,"zabbix-251:Context switches", "300")
