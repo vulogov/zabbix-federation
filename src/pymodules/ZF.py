@@ -54,6 +54,8 @@ class Federation:
         return self.__call_method__("discoveryHostGroup", (filter,))
     def discovery_HostInGroup(self, hg, filter="*"):
         return self.__call_method__("discoveryHostInGroup", (hg, filter))
+    def discoveryItems(self, hg, filter="*"):
+        return self.__call_method__("discoveryItems", (hg, filter))
 
 
 def startup(ctx):
@@ -66,6 +68,15 @@ def history(ctx, item, interval, t_shift=None, fun=None):
 def discoveryHostGroup(ctx, filter="*"):
     f = Federation(ctx)
     return f.discovery_HostGroups(filter)
+
+def discoveryHostInGroup(ctx, hg, filter="*"):
+    f = Federation(ctx)
+    return f.discovery_HostGroups(hg, filter)
+
+def discoveryItems(ctx, hg, filter="*"):
+    f = Federation(ctx)
+    return f.discoveryItems(hg, filter)
+
 
 
 
