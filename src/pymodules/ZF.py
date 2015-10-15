@@ -37,19 +37,23 @@ class Federation:
             i[{"#NODE"}] = srv
             out.append(i)
         return out
+    def __call_method__(self, method, param):
+        out = []
+        for s in self.cfg.servers():
+            srv = Federation_Server(s)
+            m = getattr(srv, method)
+            data = apply(m, param)
+            out = self.__merge__(s, out, data)
+        return self.__format_json__(out)
     def history(self, item, interval, t_shift=None, fun=None):
         srv, iteminfo = self[item]
         if not srv:
             return None
         return self(srv.history(item, interval, t_shift, fun, iteminfo))
-    def discovery_HostGroups(self, filter):
-        out = []
-        for s in self.cfg.servers():
-            srv = Federation_Server(s)
-            data = srv.discoveryHostGroup(filter)
-            out = self.__merge__(s, out, data)
-        return self.__format_json__(out)
-
+    def discovery_HostGroups(self, filter="*"):
+        return self.__call_method__("discoveryHostGroup", (filter,))
+    def discovery_HostInGroup(self, hg, filter="*"):
+        return self.__call_method__("discoveryHostInGroup", (hg, filter))
 
 
 def startup(ctx):
