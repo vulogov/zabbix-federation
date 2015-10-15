@@ -27,11 +27,28 @@ class Federation:
             return ret[stamps[-1]]
         else:
             return None
+    def __format_json__(selfself, data):
+        import simplejson as json
+        return json.dumps({"data":data})
+    def __merge__(self, srv, out, ret):
+        import simplejson as json
+        data = json.loads(ret)["data"]
+        for i in ret:
+            i[{"#NODE"}] = srv
+            out.append(i)
+        return out
     def history(self, item, interval, t_shift=None, fun=None):
         srv, iteminfo = self[item]
         if not srv:
             return None
         return self(srv.history(item, interval, t_shift, fun, iteminfo))
+    def discovery_HostGroups(self, filter):
+        out = []
+        for s in self.cfg.servers():
+            srv = Federation_Server(s)
+            data = srv.discoveryHostGroup(filter)
+            out = self.__merge__(s, out, data)
+        return self.__format_json__(out)
 
 
 
@@ -41,6 +58,11 @@ def startup(ctx):
 def history(ctx, item, interval, t_shift=None, fun=None):
     f = Federation(ctx)
     return f.history(item, interval, t_shift, fun)
+
+def discoveryHostGroup(ctx, filter="*"):
+    f = Federation(ctx)
+    return f.discovery_HostGroups(filter)
+
 
 
 main = history
